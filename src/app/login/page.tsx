@@ -37,31 +37,8 @@ const Page: React.FC = () => {
       <div className="w-[85%] md:w-[50%] lg:w-[40%] mx-auto flex justify-center mt-20 rounded-3xl bg-gray-100 shadow-md">
         <div className="form-container p-6 w-full m-0.5 sm:m-1 md:m-2 lg:m-2 flex justify-center flex-col text-center rounded-3xl bg-white shadow-sm">
           <h2 className="text-4xl font-extrabold">JobPort</h2>
-          <h3 className="text-lg font-light text-gray-400">Register Page</h3>
+          <h3 className="text-lg font-light text-gray-400">Login Page</h3>
           <form onSubmit={handleFormSubmit}>
-            <div className="my-2 grid items-center gap-3">
-              <Label htmlFor="fullName">Full Name</Label>
-              <Input
-                type="text"
-                placeholder="Full Name"
-                value={formData.name}
-                onChange={(e): ChangeEvent =>
-                  handleChangeInput("name", e.target.value)
-                }
-              />
-            </div>
-            <div className="my-2 grid items-center gap-3">
-              <Label htmlFor="userName">UserName</Label>
-
-              <Input
-                type="text"
-                placeholder="UserName"
-                value={formData.userName}
-                onChange={(e): ChangeEvent =>
-                  handleChangeInput("userName", e.target.value)
-                }
-              />
-            </div>
             <div className="my-2 grid items-center gap-3">
               <Label htmlFor="email">Email</Label>
 
@@ -86,27 +63,15 @@ const Page: React.FC = () => {
                 }
               />
             </div>
-            <div className="my-2 grid items-center gap-3">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-
-              <Input
-                type="password"
-                placeholder="Confirm Password"
-                value={formData.confirmPassword}
-                onChange={(e): ChangeEvent =>
-                  handleChangeInput("confirmPassword", e.target.value)
-                }
-              />
-            </div>
             <div className="my-4">
               <Button variant="outline" type="submit">
                 Submit
               </Button>
             </div>
             <div className="my-2 items-center gap-2 flex justify-center">
-              <span className="text-gray-400">Already have an account?</span>
+              <span className="text-gray-400">Dont have an account?</span>
               <span>
-                <Link href="/login">Sign in here</Link>
+                <Link href="/register">Create account</Link>
               </span>
             </div>
           </form>
