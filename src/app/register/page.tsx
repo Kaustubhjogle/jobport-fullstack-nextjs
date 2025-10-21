@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { registerAction } from "./regsiterAction.action"
+import { registerAction } from "./regsiterAction.action";
 import { RegisterFormData } from "@/types/auth";
 
 const Page: React.FC = () => {
@@ -16,6 +16,8 @@ const Page: React.FC = () => {
     confirmPassword: "",
     email: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChangeInput = (name: string, value: string): any => {
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -23,7 +25,17 @@ const Page: React.FC = () => {
 
   const handleFormSubmit = async (event: FormEvent) => {
     event?.preventDefault();
-    await registerAction(formData)
+    const finalFormData = {
+      name: formData?.name.trim(),
+      userName: formData?.userName.trim(),
+      password: formData.password.trim(),
+      confirmPassword: formData?.confirmPassword?.trim(),
+      email: formData.email.trim().toLowerCase(),
+    };
+
+    if (formData?.password !== formData?.confirmPassword)
+      return alert("The Confirm Password field must match the Password field.");
+    await registerAction(finalFormData);
   };
 
   return (
@@ -74,28 +86,49 @@ const Page: React.FC = () => {
             <div className="my-2 grid items-center gap-3">
               <Label htmlFor="password">Password</Label>
 
-              <Input
-                name="password"
-                type="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={(e): ChangeEvent =>
-                  handleChangeInput("password", e.target.value)
-                }
-              />
+              <div className="relative">
+                <Input
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={(e): ChangeEvent =>
+                    handleChangeInput("password", e.target.value)
+                  }
+                />
+
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </Button>
+              </div>
             </div>
             <div className="my-2 grid items-center gap-3">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
 
-              <Input
-                name="confirmPassword"
-                type="password"
-                placeholder="Confirm Password"
-                value={formData.confirmPassword}
-                onChange={(e): ChangeEvent =>
-                  handleChangeInput("confirmPassword", e.target.value)
-                }
-              />
+              <div className="relative">
+                <Input
+                  name="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Confirm Password"
+                  value={formData.confirmPassword}
+                  onChange={(e): ChangeEvent =>
+                    handleChangeInput("confirmPassword", e.target.value)
+                  }
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? "Hide" : "Show"}
+                </Button>
+              </div>
             </div>
             <div className="my-4">
               <Button variant="outline" type="submit">

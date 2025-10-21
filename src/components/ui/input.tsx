@@ -17,7 +17,6 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
       )}
       {...props}
       />
-      {type=== 'password' && <div className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"><p className="font-light text-[12px]">Show</p></div>}
       </div>
   )
 }
