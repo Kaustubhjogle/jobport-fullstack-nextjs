@@ -5,17 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
-
-interface FormData {
-  userName: string;
-  name: string;
-  password: string;
-  confirmPassword: string;
-  email: string;
-}
+import { registerAction } from "./regsiterAction.action"
+import { RegisterFormData } from "@/types/auth";
 
 const Page: React.FC = () => {
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<RegisterFormData>({
     userName: "",
     name: "",
     password: "",
@@ -27,9 +21,9 @@ const Page: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFormSubmit = (event: FormEvent): void => {
+  const handleFormSubmit = async (event: FormEvent) => {
     event?.preventDefault();
-    console.log("formData", formData);
+    await registerAction(formData)
   };
 
   return (
@@ -42,6 +36,7 @@ const Page: React.FC = () => {
             <div className="my-2 grid items-center gap-3">
               <Label htmlFor="fullName">Full Name</Label>
               <Input
+                name="fullName"
                 type="text"
                 placeholder="Full Name"
                 value={formData.name}
@@ -54,6 +49,7 @@ const Page: React.FC = () => {
               <Label htmlFor="userName">UserName</Label>
 
               <Input
+                name="userName"
                 type="text"
                 placeholder="UserName"
                 value={formData.userName}
@@ -66,6 +62,7 @@ const Page: React.FC = () => {
               <Label htmlFor="email">Email</Label>
 
               <Input
+                name="email"
                 type="email"
                 placeholder="Email"
                 value={formData.email}
@@ -78,6 +75,7 @@ const Page: React.FC = () => {
               <Label htmlFor="password">Password</Label>
 
               <Input
+                name="password"
                 type="password"
                 placeholder="Password"
                 value={formData.password}
@@ -90,6 +88,7 @@ const Page: React.FC = () => {
               <Label htmlFor="confirmPassword">Confirm Password</Label>
 
               <Input
+                name="confirmPassword"
                 type="password"
                 placeholder="Confirm Password"
                 value={formData.confirmPassword}
