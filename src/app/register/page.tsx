@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { registerAction } from "./regsiterAction.action";
+import { registerAction } from "../../features/auth/server/action.auth";
 import { RegisterFormData } from "@/types/auth";
 import { toast } from "sonner";
 

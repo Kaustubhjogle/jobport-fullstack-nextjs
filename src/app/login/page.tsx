@@ -3,23 +3,15 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { loginUserAction } from "@/features/auth/server/action.auth";
+import { LoginFormData } from "@/types/auth";
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
-
-interface FormData {
-  userName: string;
-  name: string;
-  password: string;
-  confirmPassword: string;
-  email: string;
-}
+import { toast } from "sonner";
 
 const Page: React.FC = () => {
-  const [formData, setFormData] = useState<FormData>({
-    userName: "",
-    name: "",
+  const [formData, setFormData] = useState<LoginFormData>({
     password: "",
-    confirmPassword: "",
     email: "",
   });
 
@@ -27,9 +19,18 @@ const Page: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFormSubmit = (event: FormEvent): void => {
+  const handleFormSubmit = async (event: FormEvent) => {
     event?.preventDefault();
-    console.log("formData", formData);
+    const finalData = {
+      password: formData?.password?.trim(),
+      email: formData?.email?.trim(),
+    };
+    const response = await loginUserAction(finalData);
+    if (response?.success) {
+      toast.success(response.message);
+    } else {
+      toast.error(response?.message);
+    }
   };
 
   return (

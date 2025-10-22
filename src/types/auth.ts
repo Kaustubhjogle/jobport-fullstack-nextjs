@@ -6,3 +6,8 @@ export interface RegisterFormData {
   confirmPassword?: string;
   role?: "applicant" | "employer";
 }
+
+export interface LoginFormData {
+  email: string;
+  password: string;
+}
