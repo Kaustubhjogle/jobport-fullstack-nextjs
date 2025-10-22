@@ -35,7 +35,7 @@ const Page: React.FC = () => {
     };
 
     if (formData?.password !== formData?.confirmPassword)
-      return alert("The Confirm Password field must match the Password field.");
+      return toast.error("The Confirm Password field must match the Password field.");
     const response = await registerAction(finalFormData);
     if (response?.success) {
       toast.success(response?.message);
