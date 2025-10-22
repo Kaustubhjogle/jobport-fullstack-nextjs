@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { registerAction } from "./regsiterAction.action";
 import { RegisterFormData } from "@/types/auth";
+import { toast } from "sonner";
 
 const Page: React.FC = () => {
   const [formData, setFormData] = useState<RegisterFormData>({
@@ -35,7 +36,12 @@ const Page: React.FC = () => {
 
     if (formData?.password !== formData?.confirmPassword)
       return alert("The Confirm Password field must match the Password field.");
-    await registerAction(finalFormData);
+    const response = await registerAction(finalFormData);
+    if (response?.success) {
+      toast.success(response?.message);
+    } else {
+      toast.error(response.message);
+    }
   };
 
   return (
