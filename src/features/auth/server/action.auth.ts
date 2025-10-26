@@ -3,12 +3,22 @@ import argon2 from "@node-rs/argon2";
 
 import { db } from "@/config/db";
 import { users } from "@/drizzle/schema";
-import { LoginFormData, RegisterFormData } from "@/types/auth";
 import { eq, or } from "drizzle-orm";
+import {
+  registerUserSchema,
+  RegisterUserData,
+  LoginUserData,
+  loginUserSchema,
+} from "../auth.schema";
+import { success } from "zod";
 
-export const registerAction = async (formData: RegisterFormData) => {
+export const registerAction = async (formData: RegisterUserData) => {
   try {
-    const { name, userName, email, password, role } = formData;
+    const { data: validatedData, error } =
+      registerUserSchema.safeParse(formData);
+    if (error) return { success: false, message: error.issues[0].message };
+
+    const { name, userName, email, password, role } = validatedData;
 
     const [presentUserDetails] = await db
       .select()
@@ -40,9 +50,11 @@ export const registerAction = async (formData: RegisterFormData) => {
   }
 };
 
-export const loginUserAction = async (formData: LoginFormData) => {
+export const loginUserAction = async (formData: LoginUserData) => {
   try {
-    const { password, email } = formData;
+    const { data, error } = loginUserSchema.safeParse(formData);
+    if (error) return { success: false, message: error.issues[0].message };
+    const { password, email } = data;
     const [presentUserDetails] = await db
       .select()
       .from(users)
