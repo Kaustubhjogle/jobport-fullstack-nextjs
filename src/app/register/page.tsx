@@ -4,39 +4,38 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { useState } from "react";
 import { registerAction } from "../../features/auth/server/action.auth";
-import { RegisterFormData } from "@/types/auth";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import {
+  RegisterUserWithConfirmPassData,
+  registerUserWithConfirmPassSchema,
+} from "@/features/auth/auth.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Page: React.FC = () => {
-  const [formData, setFormData] = useState<RegisterFormData>({
-    userName: "",
-    name: "",
-    password: "",
-    confirmPassword: "",
-    email: "",
-  });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleChangeInput = (name: string, value: string): any => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: zodResolver(registerUserWithConfirmPassSchema) });
 
-  const handleFormSubmit = async (event: FormEvent) => {
-    event?.preventDefault();
-    const finalFormData = {
-      name: formData?.name.trim(),
-      userName: formData?.userName.trim(),
-      password: formData.password.trim(),
-      confirmPassword: formData?.confirmPassword?.trim(),
-      email: formData.email.trim().toLowerCase(),
-    };
-
-    if (formData?.password !== formData?.confirmPassword)
-      return toast.error("The Confirm Password field must match the Password field.");
-    const response = await registerAction(finalFormData);
+  const onSubmit = async (data: RegisterUserWithConfirmPassData) => {
+    console.log(data);
+    
+    const response = await registerAction(data);
     if (response?.success) {
       toast.success(response?.message);
     } else {
@@ -50,59 +49,88 @@ const Page: React.FC = () => {
         <div className="form-container p-6 w-full m-0.5 sm:m-1 md:m-2 lg:m-2 flex justify-center flex-col text-center rounded-3xl bg-white shadow-sm">
           <h2 className="text-4xl font-extrabold">JobPort</h2>
           <h3 className="text-lg font-light text-gray-400">Register Page</h3>
-          <form onSubmit={handleFormSubmit}>
-            <div className="my-2 grid items-center gap-3">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="my-2 grid text-left gap-3">
               <Label htmlFor="fullName">Full Name</Label>
               <Input
-                name="fullName"
+                id="name"
                 type="text"
                 placeholder="Full Name"
-                value={formData.name}
-                onChange={(e): ChangeEvent =>
-                  handleChangeInput("name", e.target.value)
-                }
+                {...register("name")}
+                className={`pl-10 ${errors.name ? "border-destructive" : ""}`}
               />
+              {errors.name && (
+                <p className="text-sm text-destructive">
+                  {errors.name.message}
+                </p>
+              )}
             </div>
-            <div className="my-2 grid items-center gap-3">
-              <Label htmlFor="userName">UserName</Label>
 
+            <div className="my-2 grid text-left gap-3">
+              <Label htmlFor="userName">UserName</Label>
               <Input
-                name="userName"
+                id="userName"
                 type="text"
                 placeholder="UserName"
-                value={formData.userName}
-                onChange={(e): ChangeEvent =>
-                  handleChangeInput("userName", e.target.value)
-                }
+                {...register("userName")}
+                className={`pl-10 ${
+                  errors.userName ? "border-destructive" : ""
+                }`}
               />
+              {errors.userName && (
+                <p className="text-sm text-destructive">
+                  {errors.userName.message}
+                </p>
+              )}{" "}
             </div>
-            <div className="my-2 grid items-center gap-3">
-              <Label htmlFor="email">Email</Label>
 
+            <div className="my-2 grid text-left gap-3">
+              <Label htmlFor="userName">Role</Label>
+              <Select {...register("role")}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select your role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="applicant">Job Applicant</SelectItem>
+                  <SelectItem value="employer">Employer</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.role && (
+                <p className="text-sm text-destructive">
+                  {errors.role.message}
+                </p>
+              )}{" "}
+            </div>
+
+            <div className="my-2 grid text-left gap-3">
+              <Label htmlFor="email">Email</Label>
               <Input
-                name="email"
+                id="email"
                 type="email"
                 placeholder="Email"
-                value={formData.email}
-                onChange={(e): ChangeEvent =>
-                  handleChangeInput("email", e.target.value)
-                }
+                {...register("email")}
+                className={`pl-10 ${errors.email ? "border-destructive" : ""}`}
               />
+              {errors.email && (
+                <p className="text-sm text-destructive">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
-            <div className="my-2 grid items-center gap-3">
+
+            <div className="my-2 grid text-left gap-3">
               <Label htmlFor="password">Password</Label>
 
               <div className="relative">
                 <Input
-                  name="password"
+                  id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
-                  value={formData.password}
-                  onChange={(e): ChangeEvent =>
-                    handleChangeInput("password", e.target.value)
-                  }
+                  {...register("password")}
+                  className={`pl-10 ${
+                    errors.password ? "border-destructive" : ""
+                  }`}
                 />
-
                 <Button
                   type="button"
                   variant="ghost"
@@ -112,19 +140,25 @@ const Page: React.FC = () => {
                   {showPassword ? "Hide" : "Show"}
                 </Button>
               </div>
+              {errors.password && (
+                <p className="text-sm text-destructive">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
-            <div className="my-2 grid items-center gap-3">
+
+            <div className="my-2 grid text-left gap-3">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
 
               <div className="relative">
                 <Input
-                  name="confirmPassword"
+                  id="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Confirm Password"
-                  value={formData.confirmPassword}
-                  onChange={(e): ChangeEvent =>
-                    handleChangeInput("confirmPassword", e.target.value)
-                  }
+                  {...register("confirmPassword")}
+                  className={`pl-10 ${
+                    errors.confirmPassword ? "border-destructive" : ""
+                  }`}
                 />
                 <Button
                   type="button"
@@ -135,7 +169,13 @@ const Page: React.FC = () => {
                   {showConfirmPassword ? "Hide" : "Show"}
                 </Button>
               </div>
+              {errors.confirmPassword && (
+                <p className="text-sm text-destructive">
+                  {errors.confirmPassword.message}
+                </p>
+              )}
             </div>
+
             <div className="my-4">
               <Button variant="outline" type="submit">
                 Submit

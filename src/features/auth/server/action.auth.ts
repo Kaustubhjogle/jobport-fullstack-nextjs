@@ -18,7 +18,7 @@ export const registerAction = async (formData: RegisterUserData) => {
       registerUserSchema.safeParse(formData);
     if (error) return { success: false, message: error.issues[0].message };
 
-    const { name, userName, email, password, role } = validatedData;
+    const { name, userName, email, password, role } = validatedData;    
 
     const [presentUserDetails] = await db
       .select()
