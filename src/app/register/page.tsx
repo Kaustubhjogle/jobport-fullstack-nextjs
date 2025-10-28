@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useState } from "react";
-import { registerAction } from "../../features/auth/server/action.auth";
+import { registerAction } from "../../features/auth/server/auth.action";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import {
@@ -32,9 +32,7 @@ const Page: React.FC = () => {
     formState: { errors },
   } = useForm({ resolver: zodResolver(registerUserWithConfirmPassSchema) });
 
-  const onSubmit = async (data: RegisterUserWithConfirmPassData) => {
-    console.log(data);
-    
+  const onSubmit = async (data: RegisterUserWithConfirmPassData) => {    
     const response = await registerAction(data);
     if (response?.success) {
       toast.success(response?.message);

@@ -58,7 +58,6 @@ export const loginUserSchema = z.object({
     .toLowerCase(),
   password: z
     .string()
-    .min(8, "Password must be atleast 8 charachter long")
     .max(255, "Password must not exceed 255 characters"),
 });
 

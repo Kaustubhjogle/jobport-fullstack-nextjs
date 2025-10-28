@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoginUserData, loginUserSchema } from "@/features/auth/auth.schema";
-import { loginUserAction } from "@/features/auth/server/action.auth";
+import { loginUserAction } from "@/features/auth/server/auth.action";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";

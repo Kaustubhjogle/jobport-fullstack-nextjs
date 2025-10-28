@@ -11,6 +11,7 @@ import {
   loginUserSchema,
 } from "../auth.schema";
 import { success } from "zod";
+import { createSessionAndSetCookies } from "./use-cases/sessions";
 
 export const registerAction = async (formData: RegisterUserData) => {
   try {
@@ -18,7 +19,7 @@ export const registerAction = async (formData: RegisterUserData) => {
       registerUserSchema.safeParse(formData);
     if (error) return { success: false, message: error.issues[0].message };
 
-    const { name, userName, email, password, role } = validatedData;    
+    const { name, userName, email, password, role } = validatedData;
 
     const [presentUserDetails] = await db
       .select()
@@ -69,6 +70,8 @@ export const loginUserAction = async (formData: LoginUserData) => {
       password
     );
     if (isValidPassword) {
+      await createSessionAndSetCookies(presentUserDetails.id);
+
       return {
         success: true,
         message: "Login Successfull",

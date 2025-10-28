@@ -11,3 +11,10 @@ export interface LoginFormData {
   email: string;
   password: string;
 }
+
+export interface UserSessionData {
+  token: string;
+  ip: string;
+  userAgent: string;
+  userId: number;
+}
