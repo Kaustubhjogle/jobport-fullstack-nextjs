@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { registerAction } from "../../features/auth/server/auth.action";
 import { toast } from "sonner";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import {
   RegisterUserWithConfirmPassData,
   registerUserWithConfirmPassSchema,
@@ -30,9 +30,10 @@ const Page: React.FC = () => {
     setValue,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm({ resolver: zodResolver(registerUserWithConfirmPassSchema) });
 
-  const onSubmit = async (data: RegisterUserWithConfirmPassData) => {    
+  const onSubmit = async (data: RegisterUserWithConfirmPassData) => {
     const response = await registerAction(data);
     if (response?.success) {
       toast.success(response?.message);
@@ -84,15 +85,21 @@ const Page: React.FC = () => {
 
             <div className="my-2 grid text-left gap-3">
               <Label htmlFor="userName">Role</Label>
-              <Select {...register("role")}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select your role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="applicant">Job Applicant</SelectItem>
-                  <SelectItem value="employer">Employer</SelectItem>
-                </SelectContent>
-              </Select>
+              <Controller
+                name="role"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select your role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="applicant">Job Applicant</SelectItem>
+                      <SelectItem value="employer">Employer</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
               {errors.role && (
                 <p className="text-sm text-destructive">
                   {errors.role.message}
