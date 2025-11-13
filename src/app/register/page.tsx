@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useRouter } from "next/navigation";
 
 const Page: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -32,11 +33,17 @@ const Page: React.FC = () => {
     formState: { errors },
     control,
   } = useForm({ resolver: zodResolver(registerUserWithConfirmPassSchema) });
+  const router = useRouter();
 
   const onSubmit = async (data: RegisterUserWithConfirmPassData) => {
     const response = await registerAction(data);
     if (response?.success) {
       toast.success(response?.message);
+      if (data.role === "applicant") {
+        router.push("/dashboard");
+      } else {
+        router.push("/employer-dashboard");
+      }
     } else {
       toast.error(response.message);
     }
