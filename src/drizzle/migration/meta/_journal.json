@@ -8,6 +8,13 @@
       "when": 1761080127144,
       "tag": "0000_real_stepford_cuckoos",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1763055640045,
+      "tag": "0001_tiresome_prowler",
+      "breakpoints": true
     }
   ]
 }
