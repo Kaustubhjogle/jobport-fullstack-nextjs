@@ -2,7 +2,7 @@
 import argon2 from "@node-rs/argon2";
 
 import { db } from "@/config/db";
-import { users } from "@/drizzle/schema";
+import { applicants, employers, users } from "@/drizzle/schema";
 import { eq, or } from "drizzle-orm";
 import {
   registerUserSchema,
@@ -43,6 +43,12 @@ export const registerAction = async (formData: RegisterUserData) => {
     const [result] = await db
       .insert(users)
       .values({ name, userName, email, password: hashedPassword, role });
+
+    if (role === "employer") {
+      await db.insert(employers).values({ id: result.insertId });
+    } else {
+      await db.insert(applicants).values({ id: result?.insertId });
+    }
 
     await createSessionAndSetCookies(result?.insertId);
     return { success: true, message: "User added successfully" };
