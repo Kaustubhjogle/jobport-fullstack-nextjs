@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { cookies, headers } from "next/headers";
 import { getIPAddress } from "./location";
-import { UserSessionData } from "@/types/auth";
+import { DbClient, UserSessionData } from "@/types/auth";
 import { db } from "@/config/db";
 import { sessions, users } from "@/drizzle/schema";
 import { SESSION_LIFETIME, SESSION_REFERESH_TIME } from "@/config/constants";
@@ -16,9 +16,10 @@ const createUserSession = async ({
   ip,
   userAgent,
   userId,
+  tx = db,
 }: UserSessionData) => {
   const hashedToken = crypto.createHash("sha-256").update(token).digest("hex");
-  const [result] = await db.insert(sessions).values({
+  const [result] = await tx.insert(sessions).values({
     id: hashedToken,
     userId,
     expiresAt: new Date(Date.now() + SESSION_LIFETIME * 1000),
@@ -29,7 +30,10 @@ const createUserSession = async ({
   return result;
 };
 
-export const createSessionAndSetCookies = async (userId: number) => {
+export const createSessionAndSetCookies = async (
+  userId: number,
+  tx: DbClient = db
+) => {
   const token = createSessionToken();
   const headerList = await headers();
   const ip = await getIPAddress();
@@ -39,6 +43,7 @@ export const createSessionAndSetCookies = async (userId: number) => {
     ip,
     userAgent: headerList.get("user-agent") || "",
     userId: userId,
+    tx,
   });
 
   const cookie = await cookies();

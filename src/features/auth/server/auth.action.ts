@@ -40,17 +40,20 @@ export const registerAction = async (formData: RegisterUserData) => {
     }
 
     const hashedPassword = await argon2.hash(password);
-    const [result] = await db
-      .insert(users)
-      .values({ name, userName, email, password: hashedPassword, role });
 
-    if (role === "employer") {
-      await db.insert(employers).values({ id: result.insertId });
-    } else {
-      await db.insert(applicants).values({ id: result?.insertId });
-    }
+    await db.transaction(async (tx) => {
+      const [result] = await tx
+        .insert(users)
+        .values({ name, userName, email, password: hashedPassword, role });
 
-    await createSessionAndSetCookies(result?.insertId);
+      if (role === "employer") {
+        await tx.insert(employers).values({ id: result.insertId });
+      } else {
+        await tx.insert(applicants).values({ id: result?.insertId });
+      }
+
+      await createSessionAndSetCookies(result?.insertId, tx);
+    });
     return { success: true, message: "User added successfully" };
   } catch (e) {
     console.log(e);
