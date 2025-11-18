@@ -10,8 +10,13 @@ import {
   LoginUserData,
   loginUserSchema,
 } from "../auth.schema";
-import { success } from "zod";
-import { createSessionAndSetCookies } from "./use-cases/sessions";
+import {
+  createSessionAndSetCookies,
+  invalidateSession,
+} from "./use-cases/sessions";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import crypto from "crypto";
 
 export const registerAction = async (formData: RegisterUserData) => {
   try {
@@ -92,4 +97,21 @@ export const loginUserAction = async (formData: LoginUserData) => {
   } catch (e) {
     return { success: false, message: "Error while User Login" };
   }
+};
+
+export const logoutUserAction = async () => {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session")?.value;
+
+  if (!session) return redirect("/login");
+
+  const hashedToken = crypto
+    .createHash("sha-256")
+    .update(session)
+    .digest("hex");
+
+  await invalidateSession(hashedToken);
+  cookieStore.delete("session");
+
+  return redirect("/login");
 };
